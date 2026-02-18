@@ -1,15 +1,15 @@
-# LaunchFast AI
+# 🚀 LaunchFast AI
 
-**Production-ready SaaS boilerplate** with authentication, Stripe subscriptions, credit system, and AI-powered proposal generation. Built for freelancers and indie hackers who want to ship fast.
+Production-ready AI SaaS starter built to launch monetizable products in 10–14 days.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/Node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![React](https://img.shields.io/badge/React-19-61dafb)](https://react.dev)
-[![NestJS](https://img.shields.io/badge/NestJS-11-e0234e)](https://nestjs.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6)](https://www.typescriptlang.org)
-[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ecf8e)](https://supabase.com)
-[![Stripe](https://img.shields.io/badge/Stripe-SDK%2020-635bff)](https://stripe.com)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-412991)](https://openai.com)
+Includes:
+- 🔐 JWT Authentication
+- 💳 Stripe Subscriptions + Webhooks
+- 🪙 Credit-based usage system
+- 🤖 OpenAI-powered feature
+- 🏗 Multi-tenant architecture
+- 📦 Production-ready NestJS backend
+
 
 ---
 

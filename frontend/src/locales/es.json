@@ -1,0 +1,178 @@
+{
+  "common": {
+    "logOut": "Cerrar sesión",
+    "loading": "Cargando...",
+    "copy": "Copiar",
+    "export": "Exportar",
+    "credits": "Créditos",
+    "credit": "crédito",
+    "credits_used": "créditos usados",
+    "getStarted": "Comenzar",
+    "viewAll": "Ver todo",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {{page}} de {{total}}",
+    "newProposal": "Nueva propuesta",
+    "backToHistory": "Volver al historial",
+    "generationNotFound": "Generación no encontrada.",
+    "generateProposal": "Generar propuesta",
+    "history": "Historial",
+    "generator": "Generador",
+    "notFoundTitle": "Página no encontrada",
+    "notFoundMessage": "La página que buscas no existe o fue movida.",
+    "backHome": "Volver al inicio"
+  },
+  "nav": {
+    "pricing": "Precios",
+    "dashboard": "Panel",
+    "logIn": "Iniciar sesión",
+    "getStarted": "Comenzar"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Generador de propuestas con IA para freelancers",
+      "title": "Gana más clientes con",
+      "titleHighlight": "propuestas con IA",
+      "titleEnd": "",
+      "subtitle": "Genera propuestas freelance profesionales y personalizadas en segundos. Deja de escribir desde cero y cierra más tratos con LaunchFast AI.",
+      "startFree": "Empezar gratis",
+      "viewPricing": "Ver precios",
+      "freeCredits": "5 créditos gratis",
+      "noCard": "Sin tarjeta de crédito",
+      "cancelAnytime": "Cancela cuando quieras"
+    },
+    "features": {
+      "heading": "Todo lo que necesitas para ganar",
+      "subheading": "Funciones pensadas para freelancers que quieren escalar su negocio.",
+      "0": { "title": "Propuestas con IA", "description": "Genera propuestas freelance profesionales y ganadoras en segundos con IA avanzada." },
+      "1": { "title": "Súper rápido", "description": "Deja de pasar horas escribiendo. Obtén un borrador pulido en menos de 30 segundos." },
+      "2": { "title": "Seguro y privado", "description": "Tus datos están cifrados y no se comparten. Seguridad de nivel empresarial." },
+      "3": { "title": "Historial completo", "description": "Accede a todas tus propuestas pasadas. Busca, copia y reutiliza tu mejor trabajo." }
+    },
+    "cta": {
+      "title": "¿Listo para multiplicar tus propuestas?",
+      "subtitle": "Únete a miles de freelancers que ganan más clientes con propuestas impulsadas por IA.",
+      "button": "Empezar gratis"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión en tu cuenta",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Introduce tu contraseña",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "signUp": "Regístrate"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Empieza a generar propuestas ganadoras",
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "submit": "Crear cuenta",
+      "terms": "Al registrarte aceptas nuestros Términos de servicio y Política de privacidad.",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Iniciar sesión"
+    }
+  },
+  "dashboard": {
+    "welcome": "¡Bienvenido de nuevo, {{name}}!",
+    "overview": "Aquí tienes un resumen de tu cuenta.",
+    "creditsLeft": "Créditos restantes",
+    "creditsUsed": "Créditos usados",
+    "proposals": "Propuestas",
+    "plan": "Plan",
+    "generateProposal": "Generar propuesta",
+    "generateProposalDesc": "Crear una nueva propuesta con IA",
+    "upgradeToPro": "Pasar a Pro",
+    "upgradeDesc": "100 créditos/mes por 19 €",
+    "manageBilling": "Gestionar facturación",
+    "manageBillingDesc": "Ver facturas y gestionar suscripción",
+    "recentProposals": "Propuestas recientes",
+    "noProposalsYet": "Aún no hay propuestas",
+    "noProposalsDesc": "¡Genera tu primera propuesta con IA!",
+    "billingError": "Error al abrir el portal de facturación"
+  },
+  "generator": {
+    "title": "Generador de propuestas con IA",
+    "subtitle": "Completa los datos y deja que la IA cree una propuesta profesional.",
+    "clientName": "Nombre del cliente",
+    "budget": "Presupuesto ($)",
+    "projectDescription": "Descripción del proyecto",
+    "projectDescriptionPlaceholder": "Describe el proyecto en detalle...",
+    "scopeOfWork": "Alcance del trabajo",
+    "scopePlaceholder": "Define el alcance: entregables, hitos...",
+    "timeline": "Plazo",
+    "skills": "Tus habilidades / experiencia",
+    "skillsPlaceholder": "React, Node.js, 5 años de experiencia...",
+    "additionalNotes": "Notas adicionales (opcional)",
+    "additionalNotesPlaceholder": "Contexto o requisitos extra...",
+    "tone": "Tono",
+    "language": "Idioma",
+    "toneOptions": {
+      "professional": "Profesional y seguro",
+      "friendly": "Cercano y accesible",
+      "formal": "Formal y corporativo",
+      "creative": "Creativo y atrevido"
+    },
+    "languageOptions": { "en": "Inglés", "es": "Español", "fr": "Francés", "de": "Alemán", "pt": "Portugués" },
+    "creditUsage": "Esto usará 1 crédito. Te quedan {{count}}.",
+    "noCredits": "No te quedan créditos. Pasa a un plan superior.",
+    "success": "¡Propuesta generada con éxito!",
+    "copied": "¡Copiado al portapapeles!",
+    "exported": "¡Propuesta exportada!",
+    "error": "Error al generar la propuesta"
+  },
+  "history": {
+    "title": "Historial de generaciones",
+    "subtitle": "Consulta y gestiona todas tus generaciones con IA.",
+    "noGenerationsYet": "Aún no hay generaciones",
+    "noGenerationsDesc": "Crea tu primera propuesta con IA."
+  },
+  "generationDetail": {
+    "creditsUsed": "crédito usado",
+    "creditsUsed_other": "créditos usados",
+    "copied": "¡Copiado al portapapeles!",
+    "exported": "¡Exportado!"
+  },
+  "pricing": {
+    "title": "Precios simples y transparentes",
+    "subtitle": "Empieza gratis y mejora cuando lo necesites. Sin sorpresas, cancela cuando quieras.",
+    "checkoutError": "Error al crear el pago"
+  },
+  "plans": {
+    "free": {
+      "name": "Gratis",
+      "creditsPerMonth": "créditos al mes",
+      "features": [
+        "5 generaciones con IA al mes",
+        "Plantillas básicas de propuestas",
+        "Historial de generaciones",
+        "Copiar y exportar propuestas"
+      ],
+      "cta": "Comenzar"
+    },
+    "pro": {
+      "name": "Pro",
+      "creditsPerMonth": "créditos al mes",
+      "features": [
+        "100 generaciones con IA al mes",
+        "Plantillas premium",
+        "Historial completo",
+        "Copiar y exportar propuestas",
+        "Soporte prioritario",
+        "Personalización avanzada"
+      ],
+      "cta": "Pasar a Pro",
+      "currentPlan": "Plan actual",
+      "mostPopular": "Más popular"
+    }
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados."
+  }
+}

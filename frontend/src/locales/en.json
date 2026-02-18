@@ -1,0 +1,178 @@
+{
+  "common": {
+    "logOut": "Log Out",
+    "loading": "Loading...",
+    "copy": "Copy",
+    "export": "Export",
+    "credits": "Credits",
+    "credit": "credit",
+    "credits_used": "credits used",
+    "getStarted": "Get Started",
+    "viewAll": "View all",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}",
+    "newProposal": "New Proposal",
+    "backToHistory": "Back to History",
+    "generationNotFound": "Generation not found.",
+    "generateProposal": "Generate Proposal",
+    "history": "History",
+    "generator": "Generator",
+    "notFoundTitle": "Page not found",
+    "notFoundMessage": "The page you're looking for doesn't exist or was moved.",
+    "backHome": "Back to home"
+  },
+  "nav": {
+    "pricing": "Pricing",
+    "dashboard": "Dashboard",
+    "logIn": "Log In",
+    "getStarted": "Get Started"
+  },
+  "landing": {
+    "hero": {
+      "badge": "AI Proposal Generator for Freelancers",
+      "title": "Win More Clients with",
+      "titleHighlight": "AI-Powered",
+      "titleEnd": "Proposals",
+      "subtitle": "Generate professional, customized freelance proposals in seconds. Stop writing from scratch and start closing deals faster with LaunchFast AI.",
+      "startFree": "Start Free",
+      "viewPricing": "View Pricing",
+      "freeCredits": "5 free credits",
+      "noCard": "No credit card required",
+      "cancelAnytime": "Cancel anytime"
+    },
+    "features": {
+      "heading": "Everything You Need to Win",
+      "subheading": "Powerful features designed specifically for freelancers who want to scale their business.",
+      "0": { "title": "AI-Powered Proposals", "description": "Generate professional, winning freelance proposals in seconds using advanced AI." },
+      "1": { "title": "Lightning Fast", "description": "Stop spending hours writing proposals. Get a polished draft in under 30 seconds." },
+      "2": { "title": "Secure & Private", "description": "Your data is encrypted and never shared. Enterprise-grade security built in." },
+      "3": { "title": "Full History", "description": "Access all your past proposals anytime. Search, copy, and reuse your best work." }
+    },
+    "cta": {
+      "title": "Ready to 10x Your Proposal Game?",
+      "subtitle": "Join thousands of freelancers who are winning more clients with AI-powered proposals.",
+      "button": "Get Started for Free"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Start generating winning proposals",
+      "fullName": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "submit": "Create Account",
+      "terms": "By signing up, you agree to our Terms of Service and Privacy Policy.",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}!",
+    "overview": "Here's an overview of your account.",
+    "creditsLeft": "Credits Left",
+    "creditsUsed": "Credits Used",
+    "proposals": "Proposals",
+    "plan": "Plan",
+    "generateProposal": "Generate Proposal",
+    "generateProposalDesc": "Create a new AI-powered proposal",
+    "upgradeToPro": "Upgrade to Pro",
+    "upgradeDesc": "Get 100 credits/month for $19",
+    "manageBilling": "Manage Billing",
+    "manageBillingDesc": "View invoices & manage subscription",
+    "recentProposals": "Recent Proposals",
+    "noProposalsYet": "No proposals yet",
+    "noProposalsDesc": "Generate your first AI proposal!",
+    "billingError": "Failed to open billing portal"
+  },
+  "generator": {
+    "title": "AI Proposal Generator",
+    "subtitle": "Fill in the details below and let AI create a professional proposal for you.",
+    "clientName": "Client Name",
+    "budget": "Budget ($)",
+    "projectDescription": "Project Description",
+    "projectDescriptionPlaceholder": "Describe the project in detail...",
+    "scopeOfWork": "Scope of Work",
+    "scopePlaceholder": "Define the scope: deliverables, milestones...",
+    "timeline": "Timeline",
+    "skills": "Your Skills / Expertise",
+    "skillsPlaceholder": "React, Node.js, 5 years experience...",
+    "additionalNotes": "Additional Notes (optional)",
+    "additionalNotesPlaceholder": "Any extra context or requirements...",
+    "tone": "Tone",
+    "language": "Language",
+    "toneOptions": {
+      "professional": "Professional and confident",
+      "friendly": "Friendly and approachable",
+      "formal": "Formal and corporate",
+      "creative": "Creative and bold"
+    },
+    "languageOptions": { "en": "English", "es": "Spanish", "fr": "French", "de": "German", "pt": "Portuguese" },
+    "creditUsage": "This will use 1 credit. You have {{count}} remaining.",
+    "noCredits": "No credits remaining. Please upgrade your plan.",
+    "success": "Proposal generated successfully!",
+    "copied": "Copied to clipboard!",
+    "exported": "Proposal exported!",
+    "error": "Failed to generate proposal"
+  },
+  "history": {
+    "title": "Generation History",
+    "subtitle": "View and manage all your past AI generations.",
+    "noGenerationsYet": "No generations yet",
+    "noGenerationsDesc": "Create your first AI-powered proposal."
+  },
+  "generationDetail": {
+    "creditsUsed": "credit used",
+    "creditsUsed_other": "credits used",
+    "copied": "Copied to clipboard!",
+    "exported": "Exported!"
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Start free and upgrade when you need more. No hidden fees, cancel anytime.",
+    "checkoutError": "Failed to create checkout"
+  },
+  "plans": {
+    "free": {
+      "name": "Free",
+      "creditsPerMonth": "credits per month",
+      "features": [
+        "5 AI generations per month",
+        "Basic proposal templates",
+        "Generation history",
+        "Copy & export proposals"
+      ],
+      "cta": "Get Started"
+    },
+    "pro": {
+      "name": "Pro",
+      "creditsPerMonth": "credits per month",
+      "features": [
+        "100 AI generations per month",
+        "Premium proposal templates",
+        "Full generation history",
+        "Copy & export proposals",
+        "Priority support",
+        "Advanced customization"
+      ],
+      "cta": "Upgrade to Pro",
+      "currentPlan": "Current Plan",
+      "mostPopular": "Most Popular"
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  }
+}

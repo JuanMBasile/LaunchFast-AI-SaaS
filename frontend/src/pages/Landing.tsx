@@ -102,8 +102,9 @@ export default function Landing() {
           </p>
           <Link to="/register">
             <Button
+              variant="secondary"
               size="lg"
-              className="bg-white text-primary-700 hover:bg-stone-50 shadow-lg shadow-black/10 px-6"
+              className="bg-white! text-primary-900! hover:bg-stone-100! shadow-lg shadow-black/10 px-6 border-0"
             >
               {t('landing.cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

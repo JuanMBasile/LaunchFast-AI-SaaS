@@ -1,19 +1,20 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { UsersService } from '../users/users.service';
 import { CreditsService } from '../credits/credits.service';
-import { SupabaseService } from '../database/supabase.service';
+import { SubscriptionRepository } from '../database/repositories/subscription.repository';
 
 @Injectable()
 export class StripeService {
+  private readonly logger = new Logger(StripeService.name);
   private stripe: Stripe;
 
   constructor(
     private configService: ConfigService,
     private usersService: UsersService,
     private creditsService: CreditsService,
-    private supabaseService: SupabaseService,
+    private subscriptionRepository: SubscriptionRepository,
   ) {
     this.stripe = new Stripe(
       this.configService.getOrThrow<string>('STRIPE_SECRET_KEY'),
@@ -93,6 +94,7 @@ export class StripeService {
         break;
     }
 
+    this.logger.log(`Webhook processed: ${event.type}`);
     return { received: true };
   }
 
@@ -102,7 +104,7 @@ export class StripeService {
 
     const subscription = await this.stripe.subscriptions.retrieve(session.subscription as string) as Stripe.Subscription;
 
-    await this.supabaseService.getAdminClient().from('subscriptions').upsert({
+    await this.subscriptionRepository.upsert({
       user_id: userId,
       stripe_subscription_id: subscription.id,
       stripe_price_id: subscription.items.data[0].price.id,
@@ -110,7 +112,7 @@ export class StripeService {
       status: subscription.status,
       current_period_start: new Date((subscription as any).current_period_start * 1000).toISOString(),
       current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
-    }, { onConflict: 'user_id' });
+    });
 
     await this.usersService.updatePlan(userId, 'pro');
     await this.creditsService.upgradeCredits(userId);
@@ -123,13 +125,13 @@ export class StripeService {
 
     const plan = subscription.status === 'active' ? 'pro' : 'free';
 
-    await this.supabaseService.getAdminClient().from('subscriptions').update({
+    await this.subscriptionRepository.updateBySubscriptionId(subscription.id, {
       status: subscription.status,
       plan,
       current_period_start: new Date((subscription as any).current_period_start * 1000).toISOString(),
       current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
       cancel_at_period_end: subscription.cancel_at_period_end,
-    }).eq('stripe_subscription_id', subscription.id);
+    });
 
     await this.usersService.updatePlan(user.id, plan);
   }
@@ -139,10 +141,10 @@ export class StripeService {
     const user = await this.usersService.findByStripeCustomerId(customerId);
     if (!user) return;
 
-    await this.supabaseService.getAdminClient().from('subscriptions').update({
+    await this.subscriptionRepository.updateBySubscriptionId(subscription.id, {
       status: 'canceled',
       plan: 'free',
-    }).eq('stripe_subscription_id', subscription.id);
+    });
 
     await this.usersService.updatePlan(user.id, 'free');
     await this.creditsService.downgradeCredits(user.id);

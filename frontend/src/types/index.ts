@@ -49,6 +49,7 @@ export interface PaginatedResponse<T> {
 export interface AuthResponse {
   user: User;
   accessToken: string;
+  refreshToken?: string;
 }
 
 export interface Plan {
@@ -58,4 +59,11 @@ export interface Plan {
   credits: number;
   features: string[];
   popular?: boolean;
+}
+
+/** Type-safe error message extraction for catch blocks. */
+export function getErrorMessage(err: unknown, fallback = 'Unexpected error'): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === 'string') return err;
+  return fallback;
 }

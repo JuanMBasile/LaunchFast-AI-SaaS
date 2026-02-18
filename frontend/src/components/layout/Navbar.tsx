@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 import LanguageSwitcher from '../shared/LanguageSwitcher';
+import ThemeSwitcher from '../shared/ThemeSwitcher';
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -12,14 +13,14 @@ export default function Navbar() {
   const { t } = useTranslation();
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200/60">
+    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border-b border-stone-200/60 dark:border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center shadow-sm shadow-primary-600/20">
               <Rocket className="h-4 w-4 text-white" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-stone-900">
+            <span className="text-lg font-bold tracking-tight text-stone-900 dark:text-stone-50">
               LaunchFast <span className="text-primary-600">AI</span>
             </span>
           </Link>
@@ -27,11 +28,12 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-5">
             <Link
               to="/pricing"
-              className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors"
+              className="text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-50 transition-colors"
             >
               {t('nav.pricing')}
             </Link>
-            <div className="h-4 w-px bg-stone-200" />
+            <div className="h-4 w-px bg-stone-200 dark:bg-stone-700" />
+            <ThemeSwitcher />
             <LanguageSwitcher />
             {user ? (
               <Link to="/dashboard">
@@ -52,21 +54,25 @@ export default function Navbar() {
           </div>
 
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-stone-100 transition-colors"
+            type="button"
+            className="md:hidden p-2 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? t('a11y.closeMenu') : t('a11y.openMenu')}
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden pb-4 pt-2 space-y-2 border-t border-stone-100">
-            <div className="px-1 py-2">
+          <div className="md:hidden pb-4 pt-2 space-y-2 border-t border-stone-100 dark:border-stone-800">
+            <div className="px-1 py-2 flex items-center gap-2">
+              <ThemeSwitcher />
               <LanguageSwitcher />
             </div>
             <Link
               to="/pricing"
-              className="block px-3 py-2 text-sm text-stone-600 hover:text-stone-900 rounded-lg hover:bg-stone-50"
+              className="block px-3 py-2 text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-50 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800"
               onClick={() => setMobileOpen(false)}
             >
               {t('nav.pricing')}

@@ -18,7 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<JwtPayload> {
+  async validate(payload: JwtPayload & { type?: string }): Promise<JwtPayload> {
+    if (payload.type === 'refresh') {
+      throw new UnauthorizedException('Refresh token cannot be used for authentication');
+    }
     const user = await this.usersService.findById(payload.sub);
     if (!user) {
       throw new UnauthorizedException('User not found');

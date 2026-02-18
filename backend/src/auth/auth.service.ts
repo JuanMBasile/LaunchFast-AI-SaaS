@@ -1,16 +1,28 @@
-import { Injectable, UnauthorizedException, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { plainToInstance } from 'class-transformer';
 import { SupabaseService } from '../database/supabase.service';
 import { UsersService } from '../users/users.service';
+import { UserResponseDto } from '../users/dto/user-response.dto';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private supabaseService: SupabaseService,
     private usersService: UsersService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -27,6 +39,7 @@ export class AuthService {
     });
 
     if (authError) {
+      this.logger.warn(`Registration failed for ${dto.email}: ${authError.message}`);
       if (authError.message.includes('already')) {
         throw new ConflictException('Email already registered');
       }
@@ -34,11 +47,13 @@ export class AuthService {
     }
 
     const user = await this.usersService.findById(authData.user.id);
-    const token = this.generateToken(user);
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = this.generateRefreshToken(user.id);
 
     return {
-      user: this.sanitizeUser(user),
-      accessToken: token,
+      user: plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true }),
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -51,15 +66,38 @@ export class AuthService {
     });
 
     if (error) {
+      this.logger.warn(`Login failed for ${dto.email}: invalid credentials`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const user = await this.usersService.findById(data.user.id);
-    const token = this.generateToken(user);
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = this.generateRefreshToken(user.id);
 
     return {
-      user: this.sanitizeUser(user),
-      accessToken: token,
+      user: plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true }),
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async refreshToken(refreshToken: string) {
+    let payload: { sub: string; type?: string };
+    try {
+      payload = this.jwtService.verify(refreshToken);
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+    if (payload.type !== 'refresh') {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    const user = await this.usersService.findById(payload.sub);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return {
+      accessToken: this.generateAccessToken(user),
+      refreshToken: this.generateRefreshToken(user.id),
     };
   }
 
@@ -68,11 +106,12 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-    return this.sanitizeUser(user);
+    return plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true });
   }
 
-  private generateToken(user: any): string {
+  private generateAccessToken(user: any): string {
     const payload = {
+      type: 'access',
       sub: user.id,
       email: user.email,
       plan: user.plan,
@@ -81,15 +120,9 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  private sanitizeUser(user: any) {
-    return {
-      id: user.id,
-      email: user.email,
-      fullName: user.full_name,
-      avatarUrl: user.avatar_url,
-      plan: user.plan,
-      tenantId: user.tenant_id,
-      createdAt: user.created_at,
-    };
+  private generateRefreshToken(userId: string): string {
+    const payload = { type: 'refresh', sub: userId };
+    const expiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRATION', '7d');
+    return this.jwtService.sign(payload, { expiresIn: expiresIn as any });
   }
 }

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import CreditsIndicator from '../shared/CreditsIndicator';
 import LanguageSwitcher from '../shared/LanguageSwitcher';
+import ThemeSwitcher from '../shared/ThemeSwitcher';
 import { cn } from '../../lib/utils';
 
 const navKeys = [
@@ -32,16 +33,19 @@ export default function DashboardLayout() {
             <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center shadow-sm shadow-primary-600/20">
               <Rocket className="h-4 w-4 text-white" />
             </div>
-            <span className="text-sm font-bold tracking-tight text-stone-900">
+            <span className="text-sm font-bold tracking-tight text-stone-900 dark:text-stone-50">
               LaunchFast <span className="text-primary-600">AI</span>
             </span>
           </div>
-          <LanguageSwitcher compact />
+          <div className="flex items-center gap-2">
+            <ThemeSwitcher compact />
+            <LanguageSwitcher compact />
+          </div>
         </div>
         <CreditsIndicator />
       </div>
 
-      <nav className="flex-1 px-3 space-y-0.5">
+      <nav className="flex-1 px-3 space-y-0.5" role="navigation" aria-label={t('nav.dashboard')}>
         {navKeys.map((item) => (
           <NavLink
             key={item.to}
@@ -52,8 +56,8 @@ export default function DashboardLayout() {
               cn(
                 'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150',
                 isActive
-                  ? 'bg-primary-50 text-primary-700'
-                  : 'text-stone-500 hover:bg-stone-100 hover:text-stone-900',
+                  ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300'
+                  : 'text-stone-500 hover:bg-stone-100 hover:text-stone-900 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-100',
               )
             }
           >
@@ -63,21 +67,23 @@ export default function DashboardLayout() {
         ))}
       </nav>
 
-      <div className="p-3 border-t border-stone-200/60">
+      <div className="p-3 border-t border-stone-200/60 dark:border-stone-700">
         <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
-          <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-            <span className="text-xs font-bold text-primary-700">
+          <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center">
+            <span className="text-xs font-bold text-primary-700 dark:text-primary-300">
               {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-stone-900 truncate">{user?.fullName}</p>
-            <p className="text-xs text-stone-400 truncate">{user?.email}</p>
+            <p className="text-sm font-medium text-stone-900 dark:text-stone-100 truncate">{user?.fullName}</p>
+            <p className="text-xs text-stone-400 dark:text-stone-500 truncate">{user?.email}</p>
           </div>
         </div>
         <button
+          type="button"
           onClick={handleLogout}
-          className="flex items-center gap-2.5 px-3 py-2 w-full rounded-lg text-sm font-medium text-stone-500 hover:bg-red-50 hover:text-red-600 transition-all duration-150"
+          className="flex items-center gap-2.5 px-3 py-2 w-full rounded-lg text-sm font-medium text-stone-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all duration-150"
+          aria-label={t('a11y.logOut')}
         >
           <LogOut className="h-4 w-4" />
           {t('common.logOut')}
@@ -87,18 +93,20 @@ export default function DashboardLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-stone-50 flex">
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-stone-200/60">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex">
+      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-stone-900 border-r border-stone-200/60 dark:border-stone-800">
         <Sidebar />
       </aside>
 
       {sidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-stone-900/30 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <div className="relative w-64 bg-white shadow-xl">
+          <div className="relative w-64 bg-white dark:bg-stone-900 shadow-xl">
             <button
-              className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-stone-100"
+              type="button"
+              className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800"
               onClick={() => setSidebarOpen(false)}
+              aria-label={t('a11y.closeSidebar')}
             >
               <X className="h-4 w-4" />
             </button>
@@ -108,15 +116,17 @@ export default function DashboardLayout() {
       )}
 
       <div className="flex-1 lg:pl-64">
-        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200/60 lg:hidden">
+        <header className="sticky top-0 z-40 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border-b border-stone-200/60 dark:border-stone-800 lg:hidden">
           <div className="flex items-center justify-between px-4 h-14">
             <button
-              className="p-2 rounded-lg hover:bg-stone-100"
+              type="button"
+              className="p-2 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800"
               onClick={() => setSidebarOpen(true)}
+              aria-label={t('a11y.openSidebar')}
             >
-              <Menu className="h-5 w-5 text-stone-600" />
+              <Menu className="h-5 w-5 text-stone-600 dark:text-stone-400" />
             </button>
-            <span className="text-sm font-bold tracking-tight text-stone-900">
+            <span className="text-sm font-bold tracking-tight text-stone-900 dark:text-stone-50">
               LaunchFast <span className="text-primary-600">AI</span>
             </span>
             <div className="w-10" />

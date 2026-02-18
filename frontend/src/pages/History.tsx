@@ -4,7 +4,9 @@ import { Clock, ArrowRight, Wand2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { generationsApi } from '../api/generations';
 import Card from '../components/ui/Card';
+import SkeletonCard from '../components/ui/SkeletonCard';
 import Button from '../components/ui/Button';
+import PageTitle from '../components/shared/PageTitle';
 import type { Generation, PaginatedResponse } from '../types';
 import { formatDate } from '../lib/utils';
 
@@ -26,21 +28,23 @@ export default function History() {
 
   return (
     <div className="space-y-5">
+      <PageTitle title={t('history.title')} description={t('history.subtitle')} />
       <div>
-        <h1 className="text-xl font-bold text-stone-900 tracking-tight">{t('history.title')}</h1>
-        <p className="text-sm text-stone-500 mt-0.5">{t('history.subtitle')}</p>
+        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-50 tracking-tight">{t('history.title')}</h1>
+        <p className="text-sm text-stone-500 dark:text-stone-400 mt-0.5">{t('history.subtitle')}</p>
       </div>
 
       {loading ? (
-        <div className="text-center py-14">
-          <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary-600 border-t-transparent mx-auto mb-3" />
-          <p className="text-sm text-stone-400">{t('common.loading')}</p>
+        <div className="space-y-2">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonCard key={i} variant="list" />
+          ))}
         </div>
       ) : !data || data.data.length === 0 ? (
         <Card className="text-center py-14">
-          <Clock className="h-12 w-12 text-stone-200 mx-auto mb-3" />
-          <h3 className="text-sm font-semibold text-stone-900 mb-1">{t('history.noGenerationsYet')}</h3>
-          <p className="text-xs text-stone-400 mb-5">{t('history.noGenerationsDesc')}</p>
+          <Clock className="h-12 w-12 text-stone-200 dark:text-stone-700 mx-auto mb-3" />
+          <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100 mb-1">{t('history.noGenerationsYet')}</h3>
+          <p className="text-xs text-stone-400 dark:text-stone-500 mb-5">{t('history.noGenerationsDesc')}</p>
           <Link to="/dashboard/generator">
             <Button size="sm">
               <Wand2 className="h-3.5 w-3.5 mr-1.5" /> {t('common.generateProposal')}
@@ -57,15 +61,15 @@ export default function History() {
                     <Wand2 className="h-4 w-4 text-primary-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-stone-900 truncate">{gen.title}</p>
+                    <p className="text-sm font-medium text-stone-900 dark:text-stone-100 truncate">{gen.title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[11px] text-stone-400">{formatDate(gen.created_at, locale)}</span>
-                      <span className="text-[11px] bg-primary-50 text-primary-700 px-1.5 py-0.5 rounded font-medium">
+                      <span className="text-[11px] text-stone-400 dark:text-stone-500">{formatDate(gen.created_at, locale)}</span>
+                      <span className="text-[11px] bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 px-1.5 py-0.5 rounded font-medium">
                         {gen.credits_used} {gen.credits_used === 1 ? t('common.credit') : t('common.credits')}
                       </span>
                     </div>
                   </div>
-                  <ArrowRight className="h-3.5 w-3.5 text-stone-300 shrink-0" />
+                  <ArrowRight className="h-3.5 w-3.5 text-stone-300 dark:text-stone-600 shrink-0" />
                 </Card>
               </Link>
             ))}
@@ -81,7 +85,7 @@ export default function History() {
               >
                 {t('common.previous')}
               </Button>
-              <span className="text-xs text-stone-500 tabular-nums">
+              <span className="text-xs text-stone-500 dark:text-stone-400 tabular-nums">
                 {t('common.pageOf', { page, total: data.totalPages })}
               </span>
               <Button

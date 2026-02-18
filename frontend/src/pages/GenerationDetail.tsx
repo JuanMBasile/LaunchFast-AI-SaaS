@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
-import { ArrowLeft, Copy, Download, Calendar, Zap } from 'lucide-react';
+import { ArrowLeft, Copy, Download, Calendar, Zap, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { generationsApi } from '../api/generations';
 import Card from '../components/ui/Card';
@@ -9,6 +9,7 @@ import type { Generation } from '../types';
 import { formatDate } from '../lib/utils';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
+import { cn } from '../lib/utils';
 
 export default function GenerationDetail() {
   const { t, i18n } = useTranslation();
@@ -75,38 +76,58 @@ export default function GenerationDetail() {
       : t('generationDetail.creditsUsed_other');
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <Link
-          to="/dashboard/history"
-          className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-900 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span className="font-medium">{t('common.backToHistory')}</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleCopy}>
-            <Copy className="h-3.5 w-3.5 mr-1.5" /> {t('common.copy')}
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="h-3.5 w-3.5 mr-1.5" /> {t('common.export')}
-          </Button>
+    <div className="space-y-0">
+      <Card className="overflow-hidden p-0 border-stone-200/80 dark:border-stone-800">
+        <div className="bg-linear-to-br from-primary-600 to-primary-800 text-white px-6 py-6 sm:px-8 sm:py-7">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/20">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-white sm:text-xl dark:text-white">
+                {generation.title}
+              </h1>
+              <p className="mt-0.5 text-sm text-primary-100">
+                {formatDate(generation.created_at, locale)}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <Card className="p-6">
-        <h1 className="text-lg font-bold text-stone-900 tracking-tight mb-3">{generation.title}</h1>
-        <div className="flex items-center gap-4 mb-5 text-xs text-stone-400">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3.5 w-3.5" />
+        <div className="flex flex-wrap items-center gap-2 border-b border-stone-100 bg-stone-50/80 px-6 py-3 dark:border-stone-800 dark:bg-stone-900/50 sm:px-8">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/80 px-2.5 py-1 text-xs font-medium text-stone-700 dark:bg-stone-700 dark:text-stone-300">
+            <Calendar className="h-3 w-3" />
             {formatDate(generation.created_at, locale)}
-          </div>
-          <div className="flex items-center gap-1">
-            <Zap className="h-3.5 w-3.5" />
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
+            <Zap className="h-3 w-3" />
             {generation.credits_used} {creditsLabel}
+          </span>
+        </div>
+        <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 bg-white px-6 py-3 dark:border-stone-800 dark:bg-stone-900 sm:px-8">
+          <Link
+            to="/dashboard/history"
+            className="flex items-center gap-1.5 text-sm font-medium text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t('common.backToHistory')}
+          </Link>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleCopy}>
+              <Copy className="h-3.5 w-3.5 mr-1.5" /> {t('common.copy')}
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleExport}>
+              <Download className="h-3.5 w-3.5 mr-1.5" /> {t('common.export')}
+            </Button>
           </div>
         </div>
-        <div className="border-t border-stone-100 pt-5 prose prose-stone prose-sm max-w-none prose-headings:tracking-tight prose-headings:font-bold prose-p:leading-relaxed">
+        <div
+          className={cn(
+            'prose prose-stone prose-sm max-w-none px-6 py-8 dark:prose-invert sm:px-8',
+            'prose-headings:tracking-tight prose-headings:font-bold prose-p:leading-relaxed',
+            'prose-h2:border-b prose-h2:border-stone-200 prose-h2:pb-2 prose-h2:mb-4 dark:prose-h2:border-stone-700',
+            'prose-pre:bg-stone-100 prose-pre:border prose-pre:border-stone-200 dark:prose-pre:bg-stone-800/80 dark:prose-pre:border-stone-700',
+          )}
+        >
           <ReactMarkdown>{generation.output}</ReactMarkdown>
         </div>
       </Card>

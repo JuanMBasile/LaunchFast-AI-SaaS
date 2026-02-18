@@ -12,6 +12,7 @@ import GenerationDetail from './pages/GenerationDetail';
 import NotFound from './pages/NotFound';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ErrorBoundary from './components/shared/ErrorBoundary';
+import SkipToContent from './components/shared/SkipToContent';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -36,6 +37,8 @@ export default function App() {
     <>
       <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
       <ErrorBoundary>
+        <SkipToContent />
+        <div id="main-content">
         <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/pricing" element={<Pricing />} />
@@ -49,6 +52,7 @@ export default function App() {
         </Route>
         <Route path="*" element={<NotFound />} />
         </Routes>
+        </div>
       </ErrorBoundary>
     </>
   );

@@ -1,72 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { SupabaseService } from '../database/supabase.service';
+import { Injectable } from '@nestjs/common';
+import { UserRepository } from '../database/repositories/user.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async findById(id: string) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('users')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundException('User not found');
-    }
-
-    return data;
+    return this.userRepository.findById(id);
   }
 
   async findByEmail(email: string) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .single();
-
-    if (error || !data) return null;
-    return data;
+    return this.userRepository.findByEmail(email);
   }
 
   async findByStripeCustomerId(stripeCustomerId: string) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('users')
-      .select('*')
-      .eq('stripe_customer_id', stripeCustomerId)
-      .single();
-
-    if (error || !data) return null;
-    return data;
+    return this.userRepository.findByStripeCustomerId(stripeCustomerId);
   }
 
   async updatePlan(userId: string, plan: string) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('users')
-      .update({ plan })
-      .eq('id', userId)
-      .select()
-      .single();
-
-    if (error) throw new Error(`Failed to update plan: ${error.message}`);
-    return data;
+    return this.userRepository.updatePlan(userId, plan);
   }
 
   async updateStripeCustomerId(userId: string, stripeCustomerId: string) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('users')
-      .update({ stripe_customer_id: stripeCustomerId })
-      .eq('id', userId)
-      .select()
-      .single();
-
-    if (error) throw new Error(`Failed to update Stripe customer ID: ${error.message}`);
-    return data;
+    return this.userRepository.updateStripeCustomerId(userId, stripeCustomerId);
   }
 }

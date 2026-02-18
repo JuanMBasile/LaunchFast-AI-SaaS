@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { SupabaseService } from '../database/supabase.service';
+import { Injectable } from '@nestjs/common';
+import { GenerationRepository } from '../database/repositories/generation.repository';
 
 interface CreateGenerationDto {
   userId: string;
@@ -12,67 +12,24 @@ interface CreateGenerationDto {
 
 @Injectable()
 export class GenerationsService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private readonly generationRepository: GenerationRepository) {}
 
   async create(dto: CreateGenerationDto) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('generations')
-      .insert({
-        user_id: dto.userId,
-        type: dto.type,
-        title: dto.title,
-        input: dto.input,
-        output: dto.output,
-        credits_used: dto.creditsUsed,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(`Failed to create generation: ${error.message}`);
-    }
-
-    return data;
+    return this.generationRepository.create({
+      userId: dto.userId,
+      type: dto.type,
+      title: dto.title,
+      input: dto.input,
+      output: dto.output,
+      creditsUsed: dto.creditsUsed,
+    });
   }
 
   async findAllByUser(userId: string, page: number = 1, limit: number = 20) {
-    const offset = (page - 1) * limit;
-
-    const { data, error, count } = await this.supabaseService
-      .getAdminClient()
-      .from('generations')
-      .select('*', { count: 'exact' })
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (error) {
-      throw new Error(`Failed to fetch generations: ${error.message}`);
-    }
-
-    return {
-      data: data || [],
-      total: count || 0,
-      page,
-      limit,
-      totalPages: Math.ceil((count || 0) / limit),
-    };
+    return this.generationRepository.findAllByUser(userId, page, limit);
   }
 
   async findOneByUser(id: string, userId: string) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('generations')
-      .select('*')
-      .eq('id', id)
-      .eq('user_id', userId)
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundException('Generation not found');
-    }
-
-    return data;
+    return this.generationRepository.findOneByUser(id, userId);
   }
 }

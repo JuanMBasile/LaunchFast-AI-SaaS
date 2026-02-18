@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary-50: #f0f5ff;
   --color-primary-100: #dbe8f8;
@@ -23,13 +25,13 @@
 }
 
 body {
-  @apply bg-stone-50 text-stone-900;
+  @apply bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-50;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 @layer base {
   * {
-    @apply border-stone-200;
+    @apply border-stone-200 dark:border-stone-800;
   }
 }

@@ -19,10 +19,10 @@ export default function Button({
   const variants = {
     primary:
       'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-sm shadow-primary-600/20',
-    secondary: 'bg-stone-100 text-stone-900 hover:bg-stone-200 active:bg-stone-300',
+    secondary: 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 hover:bg-stone-200 dark:hover:bg-stone-700 active:bg-stone-300 dark:active:bg-stone-600',
     outline:
-      'border border-stone-300 text-stone-700 hover:bg-stone-50 hover:border-stone-400 active:bg-stone-100',
-    ghost: 'text-stone-600 hover:bg-stone-100 hover:text-stone-900',
+      'border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 hover:border-stone-400 dark:hover:border-stone-500 active:bg-stone-100 dark:active:bg-stone-700',
+    ghost: 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-100',
     danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm shadow-red-600/20',
   };
 

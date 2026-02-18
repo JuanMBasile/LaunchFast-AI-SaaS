@@ -4,6 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL || '';
 
 function handleUnauthorized(): void {
   localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
   window.dispatchEvent(new Event('auth:logout'));
   toast.error('Session expired. Please log in again.');
 }
@@ -26,6 +27,28 @@ class ApiClient {
     return headers;
   }
 
+  private async tryRefresh(): Promise<boolean> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) return false;
+    try {
+      const res = await fetch(`${this.baseUrl}/api/v1/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      if (data.accessToken) {
+        localStorage.setItem('accessToken', data.accessToken);
+        if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
   private async checkResponse<T>(response: Response): Promise<T> {
     if (response.status === 401) {
       handleUnauthorized();
@@ -40,19 +63,32 @@ class ApiClient {
   }
 
   async get<T>(path: string): Promise<T> {
-    const response = await fetch(`${this.baseUrl}/api${path}`, {
+    let response = await fetch(`${this.baseUrl}/api/v1${path}`, {
       method: 'GET',
       headers: this.getHeaders(),
     });
+    if (response.status === 401 && (await this.tryRefresh())) {
+      response = await fetch(`${this.baseUrl}/api/v1${path}`, {
+        method: 'GET',
+        headers: this.getHeaders(),
+      });
+    }
     return this.checkResponse<T>(response);
   }
 
   async post<T>(path: string, body?: unknown): Promise<T> {
-    const response = await fetch(`${this.baseUrl}/api${path}`, {
+    let response = await fetch(`${this.baseUrl}/api/v1${path}`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: body ? JSON.stringify(body) : undefined,
     });
+    if (response.status === 401 && (await this.tryRefresh())) {
+      response = await fetch(`${this.baseUrl}/api/v1${path}`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    }
     return this.checkResponse<T>(response);
   }
 }

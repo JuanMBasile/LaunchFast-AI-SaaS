@@ -28,6 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       setUser(null);
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
     }
   }, []);
 
@@ -61,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const res = await authApi.login({ email, password });
     localStorage.setItem('accessToken', res.accessToken);
+    if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
     setUser(res.user);
     await refreshCredits();
   };
@@ -68,12 +70,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string, fullName: string) => {
     const res = await authApi.register({ email, password, fullName });
     localStorage.setItem('accessToken', res.accessToken);
+    if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
     setUser(res.user);
     await refreshCredits();
   };
 
   const logout = () => {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     setUser(null);
     setCredits(null);
   };

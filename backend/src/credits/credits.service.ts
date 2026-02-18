@@ -1,19 +1,16 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
-import { SupabaseService } from '../database/supabase.service';
+import { Injectable, ForbiddenException, Logger } from '@nestjs/common';
+import { CreditRepository } from '../database/repositories/credit.repository';
 
 @Injectable()
 export class CreditsService {
-  constructor(private supabaseService: SupabaseService) {}
+  private readonly logger = new Logger(CreditsService.name);
+
+  constructor(private readonly creditRepository: CreditRepository) {}
 
   async getCredits(userId: string) {
-    const { data, error } = await this.supabaseService
-      .getAdminClient()
-      .from('credits')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
+    const data = await this.creditRepository.findByUser(userId);
 
-    if (error || !data) {
+    if (!data) {
       return { total: 0, used: 0, remaining: 0, resetAt: null };
     }
 
@@ -39,31 +36,12 @@ export class CreditsService {
       );
     }
 
-    const { error } = await this.supabaseService
-      .getAdminClient()
-      .from('credits')
-      .update({ used: credits.used + amount })
-      .eq('user_id', userId);
-
-    if (error) {
-      throw new Error(`Failed to deduct credits: ${error.message}`);
-    }
+    await this.creditRepository.updateUsed(userId, credits.used + amount);
+    this.logger.log(`Deducted ${amount} credit(s) for user ${userId}`);
   }
 
   async resetCredits(userId: string, total: number): Promise<void> {
-    const { error } = await this.supabaseService
-      .getAdminClient()
-      .from('credits')
-      .update({
-        total,
-        used: 0,
-        reset_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      })
-      .eq('user_id', userId);
-
-    if (error) {
-      throw new Error(`Failed to reset credits: ${error.message}`);
-    }
+    await this.creditRepository.reset(userId, total);
   }
 
   async upgradeCredits(userId: string): Promise<void> {

@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { stripeApi } from '../api/stripe';
+import { getErrorMessage } from '../types';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import PricingCard from '../components/shared/PricingCard';
+import PageTitle from '../components/shared/PageTitle';
 import { PLANS } from '../lib/utils';
 import toast from 'react-hot-toast';
 
@@ -28,15 +30,16 @@ export default function Pricing() {
     try {
       const { url } = await stripeApi.createCheckout(planId);
       window.location.href = url;
-    } catch (err: any) {
-      toast.error(err.message || t('pricing.checkoutError'));
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('pricing.checkoutError')));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-stone-950">
+      <PageTitle title={t('pricing.title')} description={t('pricing.subtitle')} />
       <Navbar />
       <main className="flex-1 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

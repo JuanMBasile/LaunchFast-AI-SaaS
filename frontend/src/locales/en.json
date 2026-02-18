@@ -22,6 +22,21 @@
     "notFoundMessage": "The page you're looking for doesn't exist or was moved.",
     "backHome": "Back to home"
   },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred. Please try again or go back to the home page.",
+    "backHome": "Back to home"
+  },
+  "a11y": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "logOut": "Log out",
+    "openSidebar": "Open sidebar",
+    "closeSidebar": "Close sidebar",
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode",
+    "skipToContent": "Skip to main content"
+  },
   "nav": {
     "pricing": "Pricing",
     "dashboard": "Dashboard",
@@ -125,7 +140,11 @@
     "success": "Proposal generated successfully!",
     "copied": "Copied to clipboard!",
     "exported": "Proposal exported!",
-    "error": "Failed to generate proposal"
+    "error": "Failed to generate proposal",
+    "proposalReady": "Proposal generated",
+    "proposalFor": "Proposal for {{name}}",
+    "generatedJustNow": "Generated just now",
+    "creditUsed": "1 credit used"
   },
   "history": {
     "title": "Generation History",

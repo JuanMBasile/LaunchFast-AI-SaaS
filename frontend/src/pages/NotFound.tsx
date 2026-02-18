@@ -3,12 +3,14 @@ import { Home, FileQuestion } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Button from '../components/ui/Button';
 import Navbar from '../components/layout/Navbar';
+import PageTitle from '../components/shared/PageTitle';
 
 export default function NotFound() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+      <PageTitle title={t('common.notFoundTitle')} />
       <Navbar />
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">

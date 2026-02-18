@@ -22,6 +22,21 @@
     "notFoundMessage": "La página que buscas no existe o fue movida.",
     "backHome": "Volver al inicio"
   },
+  "errorBoundary": {
+    "title": "Algo salió mal",
+    "message": "Ocurrió un error inesperado. Intenta de nuevo o vuelve al inicio.",
+    "backHome": "Volver al inicio"
+  },
+  "a11y": {
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "logOut": "Cerrar sesión",
+    "openSidebar": "Abrir panel lateral",
+    "closeSidebar": "Cerrar panel lateral",
+    "switchToDark": "Cambiar a modo oscuro",
+    "switchToLight": "Cambiar a modo claro",
+    "skipToContent": "Saltar al contenido principal"
+  },
   "nav": {
     "pricing": "Precios",
     "dashboard": "Panel",
@@ -125,7 +140,11 @@
     "success": "¡Propuesta generada con éxito!",
     "copied": "¡Copiado al portapapeles!",
     "exported": "¡Propuesta exportada!",
-    "error": "Error al generar la propuesta"
+    "error": "Error al generar la propuesta",
+    "proposalReady": "Propuesta generada",
+    "proposalFor": "Propuesta para {{name}}",
+    "generatedJustNow": "Generada hace un momento",
+    "creditUsed": "1 crédito usado"
   },
   "history": {
     "title": "Historial de generaciones",

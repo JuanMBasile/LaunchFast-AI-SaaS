@@ -1,69 +1,216 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import OpenAI from 'openai';
+import axios, { AxiosInstance } from 'axios';
 import { GenerateProposalDto } from './dto/generate-proposal.dto';
+
+type AiProvider = 'ollama' | 'groq';
+
+interface OllamaGenerateResponse {
+  response: string;
+  done: boolean;
+  model?: string;
+}
+
+interface GroqChatResponse {
+  choices: { message: { content: string } }[];
+}
 
 @Injectable()
 export class AiService {
-  private openai: OpenAI;
-  private model: string;
+  private readonly logger = new Logger(AiService.name);
+  private readonly provider: AiProvider;
+  private readonly httpClient: AxiosInstance;
+  private readonly model: string;
 
   constructor(private configService: ConfigService) {
-    this.openai = new OpenAI({
-      apiKey: this.configService.getOrThrow<string>('OPENAI_API_KEY'),
-    });
-    this.model = this.configService.get<string>('OPENAI_MODEL', 'gpt-4o');
+    this.provider = (this.configService.get<string>('AI_PROVIDER', 'ollama') as AiProvider);
+
+    if (this.provider === 'groq') {
+      const apiKey = this.configService.get<string>('GROQ_API_KEY');
+      if (!apiKey) {
+        throw new Error('GROQ_API_KEY is required when AI_PROVIDER=groq');
+      }
+      this.httpClient = axios.create({
+        baseURL: 'https://api.groq.com/openai/v1',
+        timeout: 60000,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      this.model = this.configService.get<string>('GROQ_MODEL', 'llama-3.3-70b-versatile');
+    } else {
+      const baseURL = this.configService.get<string>('OLLAMA_BASE_URL', 'http://localhost:11434');
+      const timeout = this.configService.get<number>('OLLAMA_TIMEOUT', 180000);
+      this.httpClient = axios.create({
+        baseURL,
+        timeout,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      this.model = this.configService.get<string>('OLLAMA_MODEL', 'llama3.2:3b');
+    }
+
+    this.logger.log(`AI provider: ${this.provider} | model: ${this.model}`);
   }
 
   async generateProposal(dto: GenerateProposalDto): Promise<string> {
-    const systemPrompt = `You are an expert freelance proposal writer. You create professional, persuasive, and well-structured proposals that win clients. Your proposals are detailed, specific to the project, and highlight value proposition clearly.
+    const systemPrompt = `Eres un experto redactor de propuestas comerciales freelance. Creas propuestas profesionales, persuasivas y bien estructuradas que ganan clientes. Tus propuestas son detalladas, específicas al proyecto y destacan claramente la propuesta de valor.
 
-Format the proposal in Markdown with clear sections:
-- **Executive Summary**
-- **Understanding of the Project**
-- **Proposed Solution & Approach**
-- **Scope of Work** (with deliverables)
-- **Timeline & Milestones**
-- **Investment** (budget breakdown)
-- **Why Choose Me/Us**
-- **Next Steps**
+Responde ÚNICAMENTE en el idioma indicado por el usuario. Usa el nombre del cliente. Referencia detalles concretos del proyecto. El desglose de presupuesto debe ser realista.`;
 
-Be professional yet personable. Use the client's name. Reference specific project details. Make the budget breakdown realistic.`;
+    const formatInstructions = `
+Formato obligatorio en Markdown con estas secciones exactas:
+## Resumen Ejecutivo
+## Problema Identificado
+## Solución Propuesta
+## Arquitectura Técnica
+## Fases y Entregables
+## Tiempo y Cronograma
+## Inversión (desglose de presupuesto)
+## Por qué elegirnos
+## Próximos pasos`;
 
-    const userPrompt = `Generate a professional freelance proposal with the following details:
+    const userMessage = `
+**Cliente:** ${dto.clientName}
+**Descripción del proyecto:** ${dto.projectDescription}
+**Alcance:** ${dto.scope}
+**Presupuesto:** $${dto.budget.toLocaleString()}
+**Plazo:** ${dto.timeline}
+**Mis habilidades/experiencia:** ${dto.skills}
+${dto.additionalNotes ? `**Notas adicionales:** ${dto.additionalNotes}` : ''}
+**Tono:** ${dto.tone || 'Profesional y confiado'}
+**Idioma de la propuesta:** ${dto.language || 'English'}
 
-**Client Name:** ${dto.clientName}
-**Project Description:** ${dto.projectDescription}
-**Scope:** ${dto.scope}
-**Budget:** $${dto.budget.toLocaleString()}
-**Timeline:** ${dto.timeline}
-**My Skills/Expertise:** ${dto.skills}
-${dto.additionalNotes ? `**Additional Notes:** ${dto.additionalNotes}` : ''}
-**Tone:** ${dto.tone || 'Professional and confident'}
-**Language:** ${dto.language || 'English'}
+Genera una propuesta completa y lista para enviar, siguiendo el formato indicado.`;
 
-Generate a complete, ready-to-send proposal.`;
+    const start = Date.now();
+    this.logger.log(`Generating proposal with ${this.provider}/${this.model}`);
 
     try {
-      const response = await this.openai.chat.completions.create({
+      const content =
+        this.provider === 'groq'
+          ? await this.generateWithGroq(systemPrompt, formatInstructions, userMessage)
+          : await this.generateWithOllama(systemPrompt, formatInstructions, userMessage);
+
+      const duration = Date.now() - start;
+      this.logger.log(`Proposal generated in ${duration}ms (${this.provider}/${this.model})`);
+      return content;
+    } catch (error: unknown) {
+      if (
+        error instanceof InternalServerErrorException ||
+        error instanceof ServiceUnavailableException
+      ) {
+        throw error;
+      }
+      this.logger.error(error);
+      throw new InternalServerErrorException('Error al generar la propuesta. Intenta de nuevo.');
+    }
+  }
+
+  private async generateWithGroq(
+    systemPrompt: string,
+    formatInstructions: string,
+    userMessage: string,
+  ): Promise<string> {
+    try {
+      const { data } = await this.httpClient.post<GroqChatResponse>('/chat/completions', {
         model: this.model,
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
+          { role: 'system', content: `${systemPrompt}\n${formatInstructions}` },
+          { role: 'user', content: userMessage },
         ],
         temperature: 0.7,
-        max_tokens: 3000,
+        max_tokens: 2048,
+        top_p: 0.9,
       });
 
-      const content = response.choices[0]?.message?.content;
+      const content = data?.choices?.[0]?.message?.content?.trim();
       if (!content) {
-        throw new InternalServerErrorException('AI returned empty response');
+        throw new InternalServerErrorException('Groq devolvió una respuesta vacía');
       }
-
       return content;
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof InternalServerErrorException) throw error;
-      throw new InternalServerErrorException('Failed to generate proposal. Please try again.');
+
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 401) {
+          throw new ServiceUnavailableException('GROQ_API_KEY inválida o expirada');
+        }
+        if (status === 429) {
+          throw new InternalServerErrorException(
+            'Límite de solicitudes excedido en Groq. Intenta en unos segundos.',
+          );
+        }
+        const msg = error.response?.data?.error?.message || error.message;
+        throw new InternalServerErrorException(msg || 'Error al comunicarse con Groq');
+      }
+      throw error;
+    }
+  }
+
+  private async generateWithOllama(
+    systemPrompt: string,
+    formatInstructions: string,
+    userMessage: string,
+  ): Promise<string> {
+    const prompt = `${systemPrompt}\n${formatInstructions}\n\nDatos del proyecto:\n${userMessage}`;
+
+    try {
+      const { data } = await this.httpClient.post<OllamaGenerateResponse>('/api/generate', {
+        model: this.model,
+        prompt,
+        stream: false,
+        options: {
+          temperature: 0.7,
+          top_p: 0.9,
+          num_predict: 1536,
+          stop: ['---', '\n\n\n'],
+        },
+      });
+
+      const content = data?.response?.trim();
+      if (!content) {
+        throw new InternalServerErrorException('Ollama devolvió una respuesta vacía');
+      }
+      return content;
+    } catch (error: unknown) {
+      if (error instanceof InternalServerErrorException) throw error;
+
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+          throw new ServiceUnavailableException(
+            'Ollama no está disponible. Asegúrate de que esté corriendo en ' +
+              this.configService.get('OLLAMA_BASE_URL', 'http://localhost:11434'),
+          );
+        }
+        if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+          throw new InternalServerErrorException(
+            'La generación tardó demasiado. Intenta de nuevo o reduce el alcance.',
+          );
+        }
+        const msg =
+          typeof error.response?.data?.error === 'string'
+            ? error.response.data.error
+            : error.message;
+        const msgStr = typeof msg === 'string' ? msg : 'Error al generar la propuesta.';
+        if (
+          msgStr.toLowerCase().includes('not found') &&
+          (msgStr.toLowerCase().includes('model') || msgStr.includes(this.model))
+        ) {
+          throw new ServiceUnavailableException(
+            'El modelo de IA no está disponible. El administrador debe ejecutar: ollama pull ' +
+              this.model,
+          );
+        }
+        throw new InternalServerErrorException(msgStr || 'Error al generar la propuesta.');
+      }
+      throw error;
     }
   }
 }

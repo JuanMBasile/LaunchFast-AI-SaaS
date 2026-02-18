@@ -29,9 +29,11 @@ Thumbs.db
 *.swp
 *.swo
 
-# Cursor / Agents (local tooling)
+# Cursor / Agents / Claude (local tooling)
 .cursor/
 .agents/
+.agent/
+.claude/
 
 # Testing
 coverage/
